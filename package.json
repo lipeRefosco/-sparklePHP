@@ -1,0 +1,8 @@
+{
+ "scripts": {
+    "dev": "nodemon src/server.php"
+ },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}

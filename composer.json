@@ -1,0 +1,22 @@
+{
+    "name": "liperefosco/sparkle-php",
+    "description": "Minimum web framework to create servers.",
+    "license": "MIT",
+    "scripts": {
+        "dev": "npm run dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Liperefosco\\SparklePHP\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "lipeRefosco",
+            "email": "luisfelipe.refosco@hotmail.com"
+        }
+    ],
+    "version": "0.0.1",
+    "minimum-stability": "dev",
+    "require": {}
+}
