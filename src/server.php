@@ -1,24 +1,36 @@
 <?php
 
-$http_header = "";
+function main() {
+    $header = "HTTP/1.1 200 OK";
+    $separator = PHP_EOL . PHP_EOL;
+    $msg = "Hello socket word!!";
+    $response = $header . $separator . $msg;
 
-$msg = "Hello socket word!!";
+    $host = 'localhost';
+    $port = 8080;
+    
+    $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+    socket_set_nonblock($socket);
+    socket_bind($socket, $host, $port);
+    socket_listen($socket);
 
-$host = '127.0.0.1';
-$port = 8080;
+    echo "Hosting in $host:$port..." . PHP_EOL;
+    while(1){
+        if($newClient = socket_accept($socket)) {
 
-$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-socket_bind($socket, $host, $port);
-socket_listen($socket);
-socket_set_nonblock($socket);
-socket_get_option($socket, SOL_TCP, SO_DEBUG);
+            socket_getpeername($newClient, $host, $port);
+            echo "New client loggin in $host:$port" . PHP_EOL;         
 
-echo "Hosting in $host:$port..." . PHP_EOL;
-while(1){
-    if($newClient = socket_accept($socket)) {
-        echo "New client loggin in $host:$port" . PHP_EOL;
-        echo socket_read($newClient, 3000);
-        socket_send($newClient, $msg, strlen($msg), MSG_CONFIRM);
-        socket_close($newClient);
+            // Read all avalable data from the socket
+            echo socket_read($newClient, 3000);
+            
+            // Send a response to the client connected
+            socket_send($newClient, $response, strlen($response), MSG_CONFIRM);
+            
+            // Turn off the client connection
+            socket_shutdown($newClient);
+        }
     }
 }
+
+main();
