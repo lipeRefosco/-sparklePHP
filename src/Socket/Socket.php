@@ -1,62 +1,71 @@
 <?php
 namespace SparklePHP\Socket;
 
+use Exception;
 use Socket as GlobalSocket;
 
 class Socket {
 
-    private GlobalSocket $socket;
-    public string $addres;
-    public int $port;
-    private array $clients;
+    protected GlobalSocket $socket;
+    protected array $clients;
 
     function __construct()
     {
         $this->socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
         $this->clients = [];
     }
-
-    public function listen(callable $callback): void
+    
+    protected function bind(GlobalSocket $socket, string $address, int $port): bool
     {
-        $callback($this);
-
-        // var_dump($this);
-        socket_set_nonblock($this->socket);
-        socket_bind($this->socket, $this->addres, $this->port);
-        socket_listen($this->socket, SOMAXCONN);
-        
-        $this->loop();
+        return socket_bind($socket, $address, $port);
     }
     
-    private function loop(): void
+    protected function setBind(): void
     {
-        // $teste = count($this->clients);
-        while(1){
-
-            // echo "new client $teste" . PHP_EOL;
-            if($newClient = socket_accept($this->socket)) {
-                
-                $this->clients[] = $newClient;
-
-                foreach($this->clients as $client) {
-                    
-                    echo 'on array ' . PHP_EOL;
-                    var_dump($client);
-
-                    // echo socket_read($client, 3000);
-                    $msg = 'HTTP/1.1 200 OK' . PHP_EOL .
-                    'Content-Type: application/json' .
-                    PHP_EOL . PHP_EOL .
-                    json_encode([
-                        ["key" => "value"],
-                        ["teste" => 1]
-                    ]);
-                    socket_send($client, $msg, strlen($msg), MSG_EOF);
-                    socket_close($client);
-                    array_shift($this->clients);
-                }
-            }
-            // break;
+        try {
+            $this->bind($this->socket, $this->address, $this->port);
+        }catch(Exception $e){
+            socket_close($this->socket);
+            $this->setBind();
+            // echo $e->getMessage();
         }
     }
+
+    protected function set_nonblock(GlobalSocket $socket): void
+    {
+        socket_set_nonblock($socket);
+    }
+    
+    protected function loop(callable $protocol): void
+    {
+        while (true) {
+            $protocol();
+        }
+    }
+
+    protected function listen(callable $callback = null): void
+    {
+        socket_listen($this->socket);
+        is_null($callback) ?: $callback();
+    }
+
+    protected function accept(GlobalSocket $socket): void
+    {
+        if($this->clients[] = socket_accept($socket));
+    }
+    protected function read(GlobalSocket $socket, int $limit): string
+    {
+        return socket_read($socket, $limit);
+    }
+
+    static function send(GlobalSocket $client, string $data, ?int $flag = MSG_CONFIRM):void
+    {
+        socket_send($client, $data, strlen($data), $flag);
+    }
+
+    static function close(GlobalSocket $client):void
+    {
+        socket_close($client);
+    } 
+
 }
