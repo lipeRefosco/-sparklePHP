@@ -145,4 +145,41 @@ class RequestTest extends TestCase {
 
         $this->assertEquals($expected, $result);
     }
+
+    public function testIfCanSplitHeaderAndBodyFromRequestWithEmptyBody(): void
+    {
+        $data = <<<END
+        GET / HTTP/1.1
+        Host: localhost:8080
+        User-Agent: insomnia/2022.4.2
+        Content-Type: application/json
+        Accept: */*
+        Content-Length: 19
+
+        END;
+        
+        $bodyExpect = new Body("");
+
+        $expected = [
+            new Headers(<<<HEADER
+            GET / HTTP/1.1
+            Host: localhost:8080
+            User-Agent: insomnia/2022.4.2
+            Content-Type: application/json
+            Accept: */*
+            Content-Length: 19
+
+            HEADER),
+            $bodyExpect->raw
+        ];
+
+        $request = new Request($data);
+        
+        $result = [
+            $request->headers,
+            $request->body->raw
+        ];
+
+        $this->assertEquals($expected, $result);
+    }
 }
