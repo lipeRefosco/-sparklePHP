@@ -36,24 +36,23 @@ class Socket {
         socket_set_nonblock($socket);
     }
     
-    protected function loop(callable $protocol): void
+    protected function loop(callable &$protocol): void
     {
         while (true) {
             $protocol();
         }
     }
 
-    protected function listen(callable $callback = null): void
+    protected function listen(): void
     {
         socket_listen($this->socket);
-        is_null($callback) ?: $callback();
     }
 
     protected function accept(GlobalSocket $socket): void
     {
         if($this->clients[] = socket_accept($socket));
     }
-    protected function read(GlobalSocket $socket, int $limit): string
+    protected function read(GlobalSocket &$socket, int $limit): string
     {
         return socket_read($socket, $limit);
     }
