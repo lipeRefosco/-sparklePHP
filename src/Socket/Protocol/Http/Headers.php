@@ -11,13 +11,11 @@ class Headers {
     function __construct(string $raw)
     {
         [$method, $route, $version, $headers] = self::parseHeaders($raw);
-        $this->method = $method;
-        $this->route = $route;
-        $this->version = $version;
+        $this->method = strtolower($method);
+        $this->route = strtolower($route);
+        $this->version = strtolower($version);
 
-        foreach ($headers as $key => $value) {
-            $this->$key = $value;
-        }
+        foreach ($headers as $key => $value) $this->set($key, $value);
     }
     
     static function parseHeaders(string $raw): array
@@ -48,6 +46,8 @@ class Headers {
     
     public function set(string $key, string $value): void
     {
+        $key = strtolower($key);
+
         $this->$key = $value;
     }
 }
