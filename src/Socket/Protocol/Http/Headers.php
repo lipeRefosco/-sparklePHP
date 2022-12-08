@@ -20,26 +20,34 @@ class Headers {
     
     static function parseHeaders(string $raw): array
     {
-        $rawSplited = explode("\n", trim($raw));
-        $shiftIndice = fn(&$i) => array_shift($i);
-        
+        $removeFirstIndice = fn(&$i) => array_shift($i);
+
+        $rawSplited = array_map(
+            fn($string) => trim($string),
+            explode("\n", trim($raw))
+        );
         [$method, $route, $version] = self::extractMethodRoteVersion($rawSplited[0]);
 
-        $shiftIndice($rawSplited);
+        $removeFirstIndice( $rawSplited );
 
-        $headers = [];
-        foreach($rawSplited as $value) {
-            [$key, $val] = explode(": ", $value);
-            $key = $key;
-            $val = $val;
-        
-            $headers += [$key => $val];
-        }
+        $headers = self::getHeadersFromRaw($rawSplited);
 
         return [$method, $route, $version, $headers];
     }
 
-    static private function extractMethodRoteVersion(string &$firstRowHttpHeader): array
+    static private function getHeadersFromRaw(array $rawSplited): array
+    {
+        $headers = [];
+        
+        foreach($rawSplited as $value) {
+            [$key, $val] = explode(": ", $value);
+            $headers += [$key => $val];
+        }
+
+        return $headers;
+    }
+
+    static private function extractMethodRoteVersion(string $firstRowHttpHeader): array
     {
         return explode(" ", $firstRowHttpHeader);
     }
