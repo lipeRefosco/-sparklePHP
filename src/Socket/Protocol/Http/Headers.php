@@ -13,10 +13,14 @@ class Headers {
     function __construct(string $raw)
     {
         $this->raw = trim($raw);
-        $this->rawSplited = array_map(
-            fn($string) => trim($string),
-            explode("\n", trim($raw))
-        );
+        $this->rawSplited = self::splitRaw($raw);
+    }
+
+    static private function splitRaw(string $raw): array
+    {
+        return array_map( fn($string) => trim($string),
+                          explode("\n", trim($raw))
+                        );
     }
 
     public function parseRaw(): void
