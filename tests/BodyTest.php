@@ -17,7 +17,7 @@ class BodyTest extends TestCase {
         $this->assertEquals($expected, $actual);
     }
 
-    public function testWithData(): void
+    public function testWithDataToBeParsedToContentType(): void
     {
         $actual = new Body('{"data": "value"}');
         $actual->set("contentType", "application/json");
