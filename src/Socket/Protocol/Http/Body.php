@@ -37,6 +37,12 @@ class Body{
 
     public function toRaw(): void
     {
-        
+        if($this->contentType === "application/json") {
+            $this->raw = json_encode($this->data);
+            return;
+        }
+
+        $this->raw = $this->data;
+        return;
     }
 }
