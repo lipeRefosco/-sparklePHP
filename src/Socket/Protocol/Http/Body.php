@@ -19,10 +19,7 @@ class Body{
     {
         $this->$key = $data;
     }
-
-    /**
-     * @throws Error
-    */
+    
     public function parseRawByContentType(string | null $contentType): void
     {   
         if($contentType === "application/json") {
