@@ -23,11 +23,9 @@ class Body{
     /**
      * @throws Error
     */
-    public function parseRawByContentType(): void
-    {
-        if(is_null($this->contentType)) throw new Error("No Content-Type");
-        
-        if($this->contentType === "application/json") {
+    public function parseRawByContentType(string | null $contentType): void
+    {   
+        if($contentType === "application/json") {
             $this->data = json_decode($this->raw, true);
             return;
         }
@@ -35,9 +33,9 @@ class Body{
         $this->data = $this->raw;
     }
 
-    public function toRaw(): void
+    public function toRaw(string | null $contentType): void
     {
-        if($this->contentType === "application/json") {
+        if($contentType === "application/json") {
             $this->raw = json_encode($this->data);
             return;
         }

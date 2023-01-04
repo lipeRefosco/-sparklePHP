@@ -5,6 +5,21 @@ use SparklePHP\Socket\Protocol\Http\Body;
 
 class BodyTest extends TestCase {
 
+    private string $basicHTML = <<<END
+                                <!DOCTYPE html>
+                                <html lang="en">
+                                <head>
+                                    <meta charset="UTF-8">
+                                    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                    <title>Document</title>
+                                </head>
+                                <body>
+                                    
+                                </body>
+                                </html>
+                                END;
+
     public function testBasicInitialization(): void
     {
         $expected = [
@@ -19,13 +34,13 @@ class BodyTest extends TestCase {
 
     public function testWithDataToBeParsedToContentType(): void
     {
+        $contentTypeFromHeader = "application/json";
+
         $actual = new Body('{"data": "value"}');
-        $actual->set("contentType", "application/json");
-        $actual->parseRawByContentType();
+        $actual->parseRawByContentType($contentTypeFromHeader);
 
         $expected = [
             "raw"  => '{"data": "value"}',
-            "contentType" => "application/json",
             "data" => [
                 "data" => "value"
             ]
@@ -34,22 +49,39 @@ class BodyTest extends TestCase {
         $this->assertEquals($expected, (array)$actual);
     }
 
+    public function testTryParseRawDataToContentTypeWhenContentTypeIsNull(): void
+    {
+        $data = $this->basicHTML;
+
+        $contentTypeFromHeader = null;
+
+        $actual = new Body($data);
+        $actual->parseRawByContentType($contentTypeFromHeader);
+
+        $expected = [
+            "raw" => $data,
+            "data" => $data
+        ];
+
+        $this->assertEquals($expected, (array)$actual);
+    }
+
     public function testTryParseApplicationJsonToRaw(): void
     {
         $expected = [
             "raw"  => '{"key":"value"}',
-            "contentType" => "application/json",
             "data" => [
                 "key" => "value"
             ]
         ];
 
+        $contentTypeFromHeader = "application/json";
+
         $actual = new Body("");
-        $actual->set("contentType", "application/json");
         $actual->set("data", [
             "key" => "value"
         ]);
-        $actual->toRaw();
+        $actual->toRaw($contentTypeFromHeader);
 
         $this->assertEquals($expected, (array)$actual);
     }
@@ -57,31 +89,18 @@ class BodyTest extends TestCase {
     public function testTryParseHTMLToRAW(): void
     {
 
-        $data = <<<END
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta http-equiv="X-UA-Compatible" content="IE=edge">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Document</title>
-        </head>
-        <body>
-            
-        </body>
-        </html>
-        END;
+        $data = $this->basicHTML;
 
         $expected = [
             "raw" => $data,
-            "contentType" => "text/html",
             "data" => $data
         ];
 
+        $contentTypeFromHeader = "text/html";
+
         $actual = new Body();
-        $actual->set("contentType", "text/html");
         $actual->set("data", $data);
-        $actual->toRaw();
+        $actual->toRaw($contentTypeFromHeader);
 
         $this->assertEquals($expected, (array)$actual);
     }
