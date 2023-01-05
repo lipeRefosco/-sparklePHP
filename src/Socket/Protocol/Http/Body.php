@@ -20,7 +20,7 @@ class Body{
         $this->$key = $data;
     }
     
-    public function parseRawByContentType(string | null $contentType): void
+    public function parseRawByContentType(?string $contentType): void
     {   
         if($contentType === "application/json") {
             $this->data = json_decode($this->raw, true);
@@ -30,7 +30,7 @@ class Body{
         $this->data = $this->raw;
     }
 
-    public function toRaw(string | null $contentType): void
+    public function toRaw(?string $contentType): void
     {
         if($contentType === "application/json") {
             $this->raw = json_encode($this->data);
