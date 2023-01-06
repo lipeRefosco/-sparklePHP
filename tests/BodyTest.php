@@ -92,7 +92,7 @@ class BodyTest extends TestCase {
         $data = $this->basicHTML;
 
         $expected = [
-            "raw" => $data,
+            "raw" => json_encode($data),
             "data" => $data
         ];
 
