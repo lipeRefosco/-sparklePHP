@@ -8,7 +8,9 @@ class Headers {
     public array  $rawSplited;
     public string $method;
     public string $route;
+    public string $status;
     public string $version;
+    public string $contentType;
 
     function __construct(string $raw)
     {
@@ -52,11 +54,11 @@ class Headers {
     }
     
     public function set(string $field, string $value): void
-    {   
-        $firstLetter = $field[0];
+    {
+        $fields = explode("-", $field);
+        $fields[0] = strtolower($fields[0]);
         
-        $field = str_replace("-", "", $field);
-        $field[0] = strtolower($firstLetter);
+        $field = implode("", $fields);
 
         $this->$field = $value;
     }
