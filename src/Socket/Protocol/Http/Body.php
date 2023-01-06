@@ -32,7 +32,8 @@ class Body{
 
     public function toRaw(): void
     {
-        $this->raw = json_encode($this->data);
-        return;
+        is_string($this->data)
+        ? $this->raw = $this->data
+        : $this->raw = json_encode($this->data);
     }
 }
