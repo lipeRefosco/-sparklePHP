@@ -10,6 +10,7 @@ class Router
     {
         $this->routes = [];
         $this->set("default", "all", function($_, $res) {
+            $res->headers->set("status", "404");
             $res->send("default page!");
         });
     }
