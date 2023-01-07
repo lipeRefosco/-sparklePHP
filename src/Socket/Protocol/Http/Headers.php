@@ -12,8 +12,10 @@ class Headers {
     public string $version;
     public string $contentType;
 
-    function __construct(string $raw)
+    function __construct(string $raw = null)
     {
+        if(is_null($raw)) return;
+
         $this->raw = trim($raw);
         $this->rawSplited = self::splitRaw($raw);
     }
