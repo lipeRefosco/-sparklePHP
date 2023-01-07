@@ -55,10 +55,7 @@ class Headers {
     
     public function set(string $field, string $value): void
     {
-        $fields = explode("-", $field);
-        $fields[0] = strtolower($fields[0]);
-        
-        $field = implode("", $fields);
+        $field = $this->formatField($field);
 
         $this->$field = $value;
     }
@@ -118,5 +115,14 @@ class Headers {
         ];
 
         return $codes[$code] ? $codes[$code] : $codes["404"];
+    }
+
+    private function formatField(string $field): string
+    {
+        $fields = explode("-", $field);
+        $fields[0] = strtolower($fields[0]);
+        
+        $field = implode("", $fields);
+        return $field;
     }
 }
