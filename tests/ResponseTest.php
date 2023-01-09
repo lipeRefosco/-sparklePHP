@@ -26,8 +26,8 @@ class ResponseTest extends TestCase {
             "body" => new Body('{"AnyKey":"any Value"}'),
             "separator" => PHP_EOL . PHP_EOL
         ];
-        $expectedRes["headers"]->set("status", "200");
-        $expectedRes["headers"]->set("version", "HTTP/1.1");
+        $expectedRes["headers"]->setStatus("200");
+        $expectedRes["headers"]->setVersion("HTTP/1.1");
         $expectedRes["headers"]->toRaw();
         $expectedRes["body"]->set("data", ["AnyKey" => "any Value"]);
 
