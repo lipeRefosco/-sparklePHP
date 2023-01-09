@@ -10,7 +10,7 @@ class Headers {
     public string $route;
     public string $status;
     public string $version;
-    public string $contentType;
+    public array $fields = [];
 
     function __construct(string $raw = null)
     {
@@ -37,12 +37,25 @@ class Headers {
 
     public function parseRaw(): void
     {
-        [$method, $route, $httpVersion] = explode(" ", $this->rawSplited[0]);
+        $statusLine = $this->rawSplited[0];
+        [$method, $route, $httpVersion] = explode(" ", $statusLine);
 
-        $this->set("method", $method);
-        $this->set("route", $route);
-        $this->set("version", $httpVersion);
+        $this->setMethod($method);
+        $this->setRoute($route);
+        $this->setVersion($httpVersion);
         $this->setFieldsAndValues();
+    }
+    
+    public function set(string $key, string $value): void
+    {
+        $this->fields += [
+            $key => $value
+        ];
+    }
+
+    public function toRaw(): void
+    {
+        $this->raw = $this->constructStatusLine();
     }
 
     private function setFieldsAndValues(): void
@@ -54,17 +67,10 @@ class Headers {
             $this->set($key, $val);
         }
     }
-    
-    public function set(string $field, string $value): void
-    {
-        $field = $this->formatField($field);
 
-        $this->$field = $value;
-    }
-
-    public function toRaw(): void
+    private function constructStatusLine(): string
     {
-        $this->raw = implode(" ", [
+        return implode(" ", [
             $this->version,
             $this->status,
             $this->statusCodeToText($this->status)
@@ -119,12 +125,19 @@ class Headers {
         return $codes[$code] ? $codes[$code] : $codes["404"];
     }
 
-    private function formatField(string $field): string
+    private function setMethod(string $method): void
     {
-        $fields = explode("-", $field);
-        $fields[0] = strtolower($fields[0]);
-        
-        $field = implode("", $fields);
-        return $field;
+        $this->method = $method;
     }
+
+    private function setRoute(string $route): void
+    {
+        $this->route = $route;
+    }
+
+    private function setVersion(string $version): void
+    {
+        $this->version = $version;
+    }
+
 }
