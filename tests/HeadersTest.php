@@ -51,6 +51,7 @@ class HeadersTest extends TestCase
             "raw" => <<<END
                      HTTP/1.1 200 OK
                      Content-Type: application/json
+                     
                      END,
             "status" => "200",
             "version" => "HTTP/1.1",

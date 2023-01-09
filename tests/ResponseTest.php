@@ -22,9 +22,9 @@ class ResponseTest extends TestCase {
                      
                      {"AnyKey":"any Value"}
                      END,
-            "headers" => new Headers(""),
+            "headers" => new Headers(),
             "body" => new Body('{"AnyKey":"any Value"}'),
-            "separator" => PHP_EOL . PHP_EOL
+            "separator" => PHP_EOL
         ];
         $expectedRes["headers"]->setStatus("200");
         $expectedRes["headers"]->setVersion("HTTP/1.1");

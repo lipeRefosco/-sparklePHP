@@ -55,7 +55,11 @@ class Headers {
 
     public function toRaw(): void
     {
-        $this->raw = $this->constructStatusLine();
+        $this->raw = $this->constructStatusLine() . PHP_EOL;
+        
+        foreach ($this->fields as $key => $value) {
+            $this->raw .= implode(": ", [$key, $value]) . PHP_EOL;
+        }
     }
 
     private function setFieldsAndValues(): void

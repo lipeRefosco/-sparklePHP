@@ -7,12 +7,12 @@ class Response {
     public string $raw;
     public Headers $headers;
     public Body $body;
-    public string $separator = PHP_EOL . PHP_EOL;
+    public string $separator = PHP_EOL;
 
     function __construct()
     {
-        $this->headers = new Headers("");
-        $this->body = new Body("");
+        $this->headers = new Headers();
+        $this->body = new Body();
     }
 
     public function send(string | array $data): void
