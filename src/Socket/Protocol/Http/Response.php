@@ -34,8 +34,8 @@ class Response {
 
     public function setDefault(): void
     {
-        $this->headers->set("version", "HTTP/1.1");
-        $this->headers->set("status", "200");
+        $this->headers->setVersion("HTTP/1.1");
+        $this->headers->setStatus("200");
     }
 
 }

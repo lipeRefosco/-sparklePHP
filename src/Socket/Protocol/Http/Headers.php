@@ -125,19 +125,24 @@ class Headers {
         return $codes[$code] ? $codes[$code] : $codes["404"];
     }
 
-    private function setMethod(string $method): void
+    public function setMethod(string $method): void
     {
         $this->method = $method;
     }
 
-    private function setRoute(string $route): void
+    public function setRoute(string $route): void
     {
         $this->route = $route;
     }
 
-    private function setVersion(string $version): void
+    public function setVersion(string $version): void
     {
         $this->version = $version;
     }
+
+    public function setStatus(string $status): void
+    {
+        $this->status = $status;
+    } 
 
 }
