@@ -9,13 +9,12 @@ class Router
     function __construct()
     {
         $this->routes = [];
-        $this->set("default", "all", function($_, $res) {
-            $res->headers->set("status", "404");
-            $res->send("default page!");
-        });
     }
 
-    public function set(string $route, string $method, callable $execution): void
+    public function set(
+        string $route,
+        string $method,
+        callable $execution): void
     {
         $method = strtoupper($method);
 
@@ -47,5 +46,13 @@ class Router
         $method = strtoupper($method);
          
         return $this->routes[$route][$method];
+    }
+
+    public function setDefault(): void
+    {
+        $this->set("default", "all", function($_, $res) {
+            $res->headers->setStatus("404");
+            $res->send("default page!");
+        });
     }
 }
