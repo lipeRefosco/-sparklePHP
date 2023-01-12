@@ -8,6 +8,8 @@ class Socket {
 
     protected GlobalSocket $socket;
     protected array $clients;
+    protected string $address;
+    protected string $port;
 
     function __construct()
     {
