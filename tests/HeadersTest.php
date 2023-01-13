@@ -5,7 +5,7 @@ use SparklePHP\Socket\Protocol\Http\Headers;
 
 class HeadersTest extends TestCase
 {
-    public function testHeaderTheParserMethod():void
+    public function testHeaderParserMethod():void
     {
         $raw = <<<END
         GET /favicon.ico HTTP/1.1
@@ -39,7 +39,7 @@ class HeadersTest extends TestCase
         $this->assertEquals($expected, (array)$result);
     }
 
-    public function testTheToRawMethod(): void
+    public function testToRawMethod(): void
     {
         $result = new Headers();
         $result->setStatus("200");
