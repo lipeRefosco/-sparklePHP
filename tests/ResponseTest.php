@@ -4,7 +4,6 @@ use PHPUnit\Framework\TestCase;
 use SparklePHP\Socket\Protocol\Http\Body;
 use SparklePHP\Socket\Protocol\Http\Headers;
 use SparklePHP\Socket\Protocol\Http\Response;
-use SparklePHP\Socket\Protocol\Http\ResponseStatusException;
 
 class ResponseTest extends TestCase {
 
@@ -20,16 +19,18 @@ class ResponseTest extends TestCase {
         $expectedRes = [
             "raw" => <<<END
                      HTTP/1.1 200 OK
-                     
+                     Content-Type: text/html; charset=UTF-8
+
                      {"AnyKey":"any Value"}
                      END,
             "headers" => new Headers(),
             "body" => new Body('{"AnyKey":"any Value"}'),
             "separator" => PHP_EOL
         ];
+
         $expectedRes["headers"]->setStatus("200");
         $expectedRes["headers"]->setVersion("HTTP/1.1");
-        $expectedRes["headers"]->set("content-Type", "text/html; charset=UTF-8");
+        $expectedRes["headers"]->set("Content-Type", "text/html; charset=UTF-8");
         $expectedRes["headers"]->toRaw();
         $expectedRes["body"]->set("data", ["AnyKey" => "any Value"]);
 
@@ -44,7 +45,7 @@ class ResponseTest extends TestCase {
         $responseHeadersExpectedFileds = [
             "content-type" => "text/html; charset=UTF-8"
         ];
-        $this->assertEquals(
+        $this->assertEqualsCanonicalizing(
             $responseHeadersExpectedFileds,
             $defaultRespose->headers->fields
         );
