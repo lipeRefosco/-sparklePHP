@@ -39,6 +39,33 @@ class HeadersTest extends TestCase
         $this->assertEquals($expected, (array)$result);
     }
 
+    public function testHeaderParserMethodWithQueryParams(): void
+    {
+        $data = <<<END
+                GET /?teste=4 HTTP/1.1
+                Host: localhost:8080
+                END;
+
+        $dataSplited = explode("\n", $data);
+
+        $actual = new Headers($data);
+        $actual->parseRaw();
+
+        $expected = [
+            "raw"        => $data,
+            "rawSplited" => $dataSplited,
+            "method"     => "GET",
+            "route"      => "/",
+            "query"      => [
+                "teste" => 4
+            ],
+            "version"    => "HTTP/1.1",
+            "fields"     => [ "Host"  => "localhost:8080" ]
+        ];
+
+        $this->assertEquals($expected, (array)$actual);
+    }
+
     public function testToRawMethod(): void
     {
         $result = new Headers();
