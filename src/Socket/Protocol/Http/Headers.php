@@ -2,6 +2,8 @@
 
 namespace SparklePHP\Socket\Protocol\Http;
 
+use SebastianBergmann\Type\NullType;
+
 class Headers {
 
     public string $raw;
@@ -10,6 +12,7 @@ class Headers {
     public string $route;
     public string $status;
     public string $version;
+    public array $query = [];
     public array $fields = [];
 
     function __construct(string $raw = null)
@@ -38,11 +41,16 @@ class Headers {
     public function parseRaw(): void
     {
         $statusLine = $this->rawSplited[0];
-        [$method, $route, $httpVersion] = explode(" ", $statusLine);
+        [$method, $fullRoute, $httpVersion] = explode(" ", $statusLine);
+        
+        $routeAndQueryParams = $this->separateQueryParamsFromRoute($fullRoute);
+        $route = $routeAndQueryParams[0];
+        $queryParams = $routeAndQueryParams[1] ?? null;
 
         $this->setMethod($method);
         $this->setRoute($route);
         $this->setVersion($httpVersion);
+        $this->setQueryParams($queryParams);
         $this->setFieldsAndValues();
     }
     
@@ -129,6 +137,25 @@ class Headers {
         return $codes[$code] ? $codes[$code] : $codes["404"];
     }
 
+    private function separateQueryParamsFromRoute(string $fullRoute): array
+    {
+        return explode("?", $fullRoute);
+    }
+
+    private function parseQueryParam(string $queryParam): array
+    {
+        $querySplited = explode("&", $queryParam);
+        $queryFormated = [];
+        
+        foreach ($querySplited as $queryWithValue) {
+            [$query, $value] = explode("=", $queryWithValue);
+            
+            $queryFormated += [ $query => $value ];
+        }
+
+        return $queryFormated;
+    }
+
     public function setMethod(string $method): void
     {
         $this->method = $method;
@@ -149,4 +176,9 @@ class Headers {
         $this->status = $status;
     } 
 
+    public function setQueryParams(string | null $queryParams): void
+    {
+        if(is_null($queryParams)) return;
+        $this->query = $this->parseQueryParam($queryParams);
+    }
 }
