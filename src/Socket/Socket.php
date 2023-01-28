@@ -24,8 +24,13 @@ class Socket {
     
     protected function setBind(): void
     {
-        socket_set_option($this->socket, SOL_SOCKET, SO_REUSEADDR, 1);
+        $this->setOption();
         $this->bind($this->socket, $this->address, $this->port);
+    }
+
+    protected function setOption(): void
+    {
+        socket_set_option($this->socket, SOL_SOCKET, SO_REUSEADDR, 1);
     }
 
     protected function set_nonblock(GlobalSocket $socket): void
