@@ -19,7 +19,7 @@ class ResponseTest extends TestCase {
         $expectedRes = [
             "raw" => <<<END
                      HTTP/1.1 200 OK
-                     Content-Type: text/html; charset=UTF-8
+                     Content-Type: application/json
 
                      {"AnyKey":"any Value"}
                      END,
@@ -30,20 +30,20 @@ class ResponseTest extends TestCase {
 
         $expectedRes["headers"]->setStatus("200");
         $expectedRes["headers"]->setVersion("HTTP/1.1");
-        $expectedRes["headers"]->set("Content-Type", "text/html; charset=UTF-8");
+        $expectedRes["headers"]->set("Content-Type", "application/json");
         $expectedRes["headers"]->toRaw();
         $expectedRes["body"]->set("data", ["AnyKey" => "any Value"]);
 
         $this->assertEquals($expectedRes, (array)$resposeTest);
     }
 
-    public function testSetDefault(): void
+    public function testSetupResponse(): void
     {
         $defaultRespose = new Response();
-        $defaultRespose->setDefault();
+        $defaultRespose->setupResponse();
 
         $responseHeadersExpectedFileds = [
-            "content-type" => "text/html; charset=UTF-8"
+            "content-type" => "application/json"
         ];
         $this->assertEqualsCanonicalizing(
             $responseHeadersExpectedFileds,
