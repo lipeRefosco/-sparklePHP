@@ -24,13 +24,8 @@ class Socket {
     
     protected function setBind(): void
     {
-        try {
-            $this->bind($this->socket, $this->address, $this->port);
-        }catch(Exception $e){
-            socket_close($this->socket);
-            $this->setBind();
-            // echo $e->getMessage();
-        }
+        socket_set_option($this->socket, SOL_SOCKET, SO_REUSEADDR, 1);
+        $this->bind($this->socket, $this->address, $this->port);
     }
 
     protected function set_nonblock(GlobalSocket $socket): void
