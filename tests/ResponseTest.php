@@ -10,7 +10,7 @@ class ResponseTest extends TestCase {
     public function testTryCreateResposeSendingAJSONData(): void
     {
         $resposeTest = new Response();
-        $resposeTest->setDefault();
+        $resposeTest->setup();
         $resposeTest->send([
             "AnyKey" => "any Value"
         ]);
@@ -40,7 +40,7 @@ class ResponseTest extends TestCase {
     public function testSetupResponse(): void
     {
         $defaultRespose = new Response();
-        $defaultRespose->setupResponse();
+        $defaultRespose->setup();
 
         $responseHeadersExpectedFileds = [
             "content-type" => "application/json"

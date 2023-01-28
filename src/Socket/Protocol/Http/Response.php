@@ -32,11 +32,11 @@ class Response {
         $this->raw .= $this->body->raw;
     }
 
-    public function setDefault(): void
+    public function setup(): void
     {
         $this->headers->setVersion("HTTP/1.1");
         $this->headers->setStatus("200");
-        $this->headers->set("Content-Type", "text/html; charset=UTF-8");
+        $this->headers->set("Content-Type", "application/json");
     }
 
 }
