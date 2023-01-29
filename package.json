@@ -1,6 +1,6 @@
 {
  "scripts": {
-    "dev": "nodemon src/index.php"
+    "dev": "nodemon examples/basic.php"
  },
   "devDependencies": {
     "nodemon": "^2.0.20"
