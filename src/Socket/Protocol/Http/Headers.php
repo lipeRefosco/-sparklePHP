@@ -2,8 +2,6 @@
 
 namespace SparklePHP\Socket\Protocol\Http;
 
-use SebastianBergmann\Type\NullType;
-
 class Headers {
 
     public string $raw;
