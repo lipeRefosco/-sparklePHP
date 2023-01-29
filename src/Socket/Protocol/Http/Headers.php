@@ -2,6 +2,8 @@
 
 namespace SparklePHP\Socket\Protocol\Http;
 
+use Exception;
+
 class Headers {
 
     public string $raw;
@@ -37,15 +39,14 @@ class Headers {
             $rawSplited
         );
     }
-
+    
     public function parseRaw(): void
     {
         $statusLine = $this->rawSplited[0];
         [$method, $fullRoute, $httpVersion] = explode(" ", $statusLine);
-        
-        $routeAndQueryParams = $this->separateQueryParamsFromRoute($fullRoute);
-        $route = $routeAndQueryParams[0];
-        $queryParams = $routeAndQueryParams[1] ?? null;
+
+        $route = ""; $queryParams = "";
+        $this->separateQueryParamsFromRoute($fullRoute, $route, $queryParams);
 
         $this->setMethod($method);
         $this->setRoute($route);
@@ -137,13 +138,19 @@ class Headers {
         return $codes[$code] ?? $codes["404"];
     }
 
-    private function separateQueryParamsFromRoute(string $fullRoute): array
+    private function separateQueryParamsFromRoute(string $fullRoute, string &$route, string &$queryParams): void
     {
-        return explode("?", $fullRoute);
+        $routeAndQueryParams = explode("?", $fullRoute);
+        $route = $routeAndQueryParams[0] ?? throw new Exception("Bad request na separação de strings");
+        $queryParams = $routeAndQueryParams[1] ?? "";
+         
     }
 
     private function parseQueryParam(string $queryParam): array
     {
+        $queryParamsIsEmpty = $queryParam == "";
+        if($queryParamsIsEmpty) return [];
+
         $querySplited = explode("&", $queryParam);
         $queryFormated = [];
         
