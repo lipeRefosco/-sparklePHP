@@ -84,7 +84,6 @@ class HeadersTest extends TestCase
                      END,
             "status" => "200",
             "version" => "HTTP/1.1",
-            "query"  => [],
             "fields" => [
                 "Content-Type" => "application/json"
             ]

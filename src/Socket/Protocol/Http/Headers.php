@@ -12,7 +12,7 @@ class Headers {
     public string $route;
     public string $status;
     public string $version;
-    public array $query = [];
+    public array $query;
     public array $fields = [];
 
     function __construct(string $raw = null)
