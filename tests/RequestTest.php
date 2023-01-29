@@ -7,205 +7,125 @@ use SparklePHP\Socket\Protocol\Http\Request;
 
 class RequestTest extends TestCase {
 
-    public function testIfCanSplitHeaderAndBodyFromRequest(): void
+    public string $rawHeaders_with_contentType_as_json = <<<END
+    GET / HTTP/1.1
+    Host: localhost:8080
+    User-Agent: insomnia/2022.4.2
+    Content-Type: application/json
+    Accept: */*
+    Content-Length: 19
+    END;
+
+    public string $bodyJson_valid = '{"key": "value"}';
+    public string $bodyJson_multipleSpaces = '{
+
+
+
+        "key": "value"
+    }';
+
+    public string $bodyXML = <<<'XML'
+    <?xml version="1.0" encoding="UTF-8"?>
+    <note>
+    <to>Tove</to>
+    <from>Jani</from>
+    <heading>Reminder</heading>
+    <body>Don't forget me this weekend!</body>
+    </note>
+    XML;
+
+    public function testIfParseRequestWithJsonInBadFormat(): void
     {
-        $data = <<<END
-        GET / HTTP/1.1
-        Host: localhost:8080
-        User-Agent: insomnia/2022.4.2
-        Content-Type: application/json
-        Accept: */*
-        Content-Length: 19
-        
-        {
-            "key": "value"
-        }
-        END;
-
-        $bodyExpect = new Body(<<<BODY
-        {"key": "value"}
-        BODY);
-        
-        $expected = [
-            new Headers(<<<HEADER
-            GET / HTTP/1.1
-            Host: localhost:8080
-            User-Agent: insomnia/2022.4.2
-            Content-Type: application/json
-            Accept: */*
-            Content-Length: 19
-            HEADER),
-            $bodyExpect->raw
-        ];
-
-        $request = new Request($data);
-
-        $result = [
-            $request->headers,
-            $request->body->raw
-        ];
-
-        $this->assertEquals($expected, $result);
-    }
-
-    public function testIfCanSplitHeaderAndBodyFromRequestWithBodyBadFormat(): void
-    {
-        $data = <<<END
-        GET / HTTP/1.1
-        Host: localhost:8080
-        User-Agent: insomnia/2022.4.2
-        Content-Type: application/json
-        Accept: */*
-        Content-Length: 19
-        
-        {
-        
-        
-            "key": "value"
-        }
-        END;
-
-        $bodyExpect = new Body("{\"key\": \"value\"}");
+        $rawRequest = $this->rawHeaders_with_contentType_as_json .
+                      PHP_EOL . PHP_EOL .
+                      $this->bodyJson_multipleSpaces;
 
         $expected = [
-            new Headers(<<<HEADER
-            GET / HTTP/1.1
-            Host: localhost:8080
-            User-Agent: insomnia/2022.4.2
-            Content-Type: application/json
-            Accept: */*
-            Content-Length: 19
-            HEADER),
-            $bodyExpect->raw
+            "headers" => new Headers($this->rawHeaders_with_contentType_as_json),
+            "body" => new Body($this->bodyJson_valid)
         ];
+        $expected["headers"]->parseRaw();
+        $expected["body"]->parseRawByContentType($expected["headers"]->fields["Content-Type"]);
 
-        $request = new Request($data);
-
-        $result = [
-            $request->headers,
-            $request->body->raw
-        ];
-
-        $this->assertEquals($expected, $result);
-    }
-
-    public function testIfCanSplitHeaderAndBodyFromRequestWithMultipleLineBetweenHeaderAndBody(): void
-    {
-        $data = <<<END
-        GET / HTTP/1.1
-        Host: localhost:8080
-        User-Agent: insomnia/2022.4.2
-        Content-Type: application/json
-        Accept: */*
-        Content-Length: 19
-        
-        
-        
-
-        {
-        
-        
-            "key": "value"
-        }
-        END;
-        $bodyExpect = new Body(<<<BODY
-        {"key": "value"}
-        BODY);
-
-        $expected = [
-            new Headers(<<<HEADER
-            GET / HTTP/1.1
-            Host: localhost:8080
-            User-Agent: insomnia/2022.4.2
-            Content-Type: application/json
-            Accept: */*
-            Content-Length: 19
-            HEADER),
-            $bodyExpect->raw
-        ];
-
-        $request = new Request($data);
-
-        $result = [
-            $request->headers,
-            $request->body->raw
-        ];
-
-        $this->assertEquals($expected, $result);
-    }
-
-    public function testIfCanSplitHeaderAndBodyFromRequestWithEmptyBody(): void
-    {
-        $data = <<<END
-        GET / HTTP/1.1
-        Host: localhost:8080
-        User-Agent: insomnia/2022.4.2
-        Content-Type: application/json
-        Accept: */*
-        Content-Length: 19
-
-        END;
-        
-        $bodyExpect = new Body("");
-
-        $expected = [
-            new Headers(<<<HEADER
-            GET / HTTP/1.1
-            Host: localhost:8080
-            User-Agent: insomnia/2022.4.2
-            Content-Type: application/json
-            Accept: */*
-            Content-Length: 19
-
-            HEADER),
-            $bodyExpect->raw
-        ];
-
-        $request = new Request($data);
-        
-        $result = [
-            $request->headers,
-            $request->body->raw
-        ];
-
-        $this->assertEquals($expected, $result);
-    }
-
-    public function testIfCanParseRawRequest(): void
-    {
-        $rawHeader = <<<HEADER
-                     GET / HTTP/1.1
-                     Host: localhost:8080
-                     User-Agent: insomnia/2022.7.3
-                     Content-Type: application/json
-                     Accept: */*
-                     Content-Length: 21
-                     HEADER;
-        
-        $rawBody = <<<BODY
-                   {"teste": "valor"}
-                   BODY;
-
-        $fullData = <<<FULLDATA
-                    $rawHeader
-                    
-                    $rawBody
-                    FULLDATA;
-        
-        $headerExpected = new Headers($rawHeader);
-        $headerExpected->parseRaw();
-
-        $bodyExpect = new Body($rawBody);
-        $bodyExpect->parseRawByContentType($headerExpected->fields["Content-Type"]);
-
-        $expected = [
-            "headers" => $headerExpected,
-            "body" => $bodyExpect
-        ];
-        
-        $actual = new Request($fullData);
+        $actual = new Request($rawRequest);
         $actual->parseRaw();
 
+        $this->assertEquals($expected, (array)$actual);
+    }
+
+    public function testIfParseRequestWithMultipleLinesBetweenHeaderAndBody(): void
+    {
+        $rawRequest = $this->rawHeaders_with_contentType_as_json .
+                      PHP_EOL . PHP_EOL . PHP_EOL . PHP_EOL . PHP_EOL . PHP_EOL . PHP_EOL . PHP_EOL .
+                      $this->bodyJson_multipleSpaces;
+
+        $expected = [
+            "headers" => new Headers($this->rawHeaders_with_contentType_as_json),
+            "body" => new Body($this->bodyJson_valid)
+        ];
+        $expected["headers"]->parseRaw();
+        $expected["body"]->parseRawByContentType($expected["headers"]->fields["Content-Type"]);
+
+        $actual = new Request($rawRequest);
+        $actual->parseRaw();
+
+        $this->assertEquals($expected, (array)$actual);
+    }
+
+    public function testIfCanParseRequestWithoutBody(): void
+    {
+        $data = $this->rawHeaders_with_contentType_as_json .
+                PHP_EOL . PHP_EOL;
+
+        $expected = [
+            "headers" => new Headers($data),
+            "body" => new Body()
+        ];
+        
+        $expected["headers"]->parseRaw();
+        $expected["body"]->parseRawByContentType($expected["headers"]->fields["Content-Type"]);
+
+        $actual = new Request($data);
+        $actual->parseRaw();
+
+        $this->assertEquals($expected, (array)$actual);
+    }
+
+    public function testIfCanParseRequestWithAValidJson(): void
+    {
+        $rawRequest = $this->rawHeaders_with_contentType_as_json .
+                      PHP_EOL . PHP_EOL .
+                      $this->bodyJson_valid;
+
+        $expected = [
+            "headers" => new Headers($this->rawHeaders_with_contentType_as_json),
+            "body" => new Body($this->bodyJson_valid)
+        ];
+        $expected["headers"]->parseRaw();
+        $expected["body"]->parseRawByContentType($expected["headers"]->fields["Content-Type"]);
+
+        $actual = new Request($rawRequest);
+        $actual->parseRaw();
+
+        $this->assertEquals($expected, (array)$actual);
+    }
+
+    public function testIfcanParseRequestWithBodyAsXMLAndHeaderWithContentTypeAsJson(): void
+    {
+        $rawRequest = $this->rawHeaders_with_contentType_as_json .
+                      PHP_EOL . PHP_EOL . 
+                      $this->bodyXML;
+        
+        $expected = [
+            "headers" => new Headers($this->rawHeaders_with_contentType_as_json),
+            "body" => new Body(str_replace(PHP_EOL, "", $this->bodyXML))
+        ];
+        $expected["headers"]->parseRaw();
+        $expected["body"]->parseRawByContentType($expected["headers"]->fields["Content-Type"]);
+
+        $actual = new Request($rawRequest);
+        $actual->parseRaw();
+        
         $this->assertEquals($expected, (array)$actual);
     }
 }

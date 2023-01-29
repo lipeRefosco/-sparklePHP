@@ -2,12 +2,10 @@
 
 namespace SparklePHP\Socket\Protocol\Http;
 
-use Error;
-
 class Body{
 
     public string $raw;
-    public string | array $data;
+    public string | array | null $data;
 
     function __construct(string $raw = null)
     {

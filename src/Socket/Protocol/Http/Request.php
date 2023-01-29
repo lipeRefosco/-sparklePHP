@@ -38,8 +38,6 @@ class Request{
     public function parseRaw(): void
     {
         $this->headers->parseRaw();
-        $this->body->parseRawByContentType(
-            $this->headers->fields["Content-Type"]
-        );
+        $this->body->parseRawByContentType($this->headers->fields["Content-Type"]);
     }
 }
