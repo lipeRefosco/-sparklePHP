@@ -22,7 +22,9 @@ class Headers {
     }
 
     /**
-     * Trim and explode the raw request input
+     * Split the raw request received from client and
+     * clean each splited row.
+     * 
      * @param string
      * @return array 
     */
