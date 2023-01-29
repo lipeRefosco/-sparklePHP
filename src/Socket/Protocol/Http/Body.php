@@ -9,10 +9,9 @@ class Body{
     public string $raw;
     public string | array $data;
 
-    function __construct(string $raw = "")
+    function __construct(string $raw = null)
     {
         $this->raw = trim($raw);
-        $this->data = "";
     }
 
     public function set(string $key, string | array $data): void

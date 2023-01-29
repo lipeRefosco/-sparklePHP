@@ -23,11 +23,10 @@ class BodyTest extends TestCase {
     public function testBasicInitialization(): void
     {
         $expected = [
-            "raw"  => "",
-            "data" => ""
+            "raw" => null
         ];
 
-        $actual = (array)new Body("");
+        $actual = (array)new Body();
         
         $this->assertEquals($expected, $actual);
     }
