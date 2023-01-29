@@ -12,7 +12,7 @@ $port = 8080;
 $app = new Sparkle($address, $port);
 
 $app->get("/", function (Request $req, Response $res) {
-    $res->send(json_encode($res));
+    $res->send(json_encode($req));
 });
 
 $app->listen(function (Sparkle $app) {

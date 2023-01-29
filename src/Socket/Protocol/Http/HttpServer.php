@@ -33,7 +33,7 @@ class HttpServer extends Socket {
             $rawRequest = $this->read($client, $this->limit);
 
             $this->request = new Request($rawRequest);
-            $this->request->headers->parseRaw();
+            $this->request->parseRaw();
 
             $this->response = new Response();
             $this->response->setup();

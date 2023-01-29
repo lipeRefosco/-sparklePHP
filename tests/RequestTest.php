@@ -23,9 +23,7 @@ class RequestTest extends TestCase {
         END;
 
         $bodyExpect = new Body(<<<BODY
-        {
-            "key": "value"
-        }
+        {"key": "value"}
         BODY);
         
         $expected = [
@@ -67,13 +65,7 @@ class RequestTest extends TestCase {
         }
         END;
 
-        $bodyExpect = new Body(<<<BODY
-        {
-    
-    
-            "key": "value"
-        }
-        BODY);
+        $bodyExpect = new Body("{\"key\": \"value\"}");
 
         $expected = [
             new Headers(<<<HEADER
@@ -117,11 +109,7 @@ class RequestTest extends TestCase {
         }
         END;
         $bodyExpect = new Body(<<<BODY
-        {
-        
-        
-            "key": "value"
-        }
+        {"key": "value"}
         BODY);
 
         $expected = [
@@ -181,5 +169,43 @@ class RequestTest extends TestCase {
         ];
 
         $this->assertEquals($expected, $result);
+    }
+
+    public function testIfCanParseRawRequest(): void
+    {
+        $rawHeader = <<<HEADER
+                     GET / HTTP/1.1
+                     Host: localhost:8080
+                     User-Agent: insomnia/2022.7.3
+                     Content-Type: application/json
+                     Accept: */*
+                     Content-Length: 21
+                     HEADER;
+        
+        $rawBody = <<<BODY
+                   {"teste": "valor"}
+                   BODY;
+
+        $fullData = <<<FULLDATA
+                    $rawHeader
+                    
+                    $rawBody
+                    FULLDATA;
+        
+        $headerExpected = new Headers($rawHeader);
+        $headerExpected->parseRaw();
+
+        $bodyExpect = new Body($rawBody);
+        $bodyExpect->parseRawByContentType($headerExpected->fields["Content-Type"]);
+
+        $expected = [
+            "headers" => $headerExpected,
+            "body" => $bodyExpect
+        ];
+        
+        $actual = new Request($fullData);
+        $actual->parseRaw();
+
+        $this->assertEquals($expected, (array)$actual);
     }
 }
