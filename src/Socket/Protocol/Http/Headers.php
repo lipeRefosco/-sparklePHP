@@ -134,7 +134,7 @@ class Headers {
             "505"  => "HTTP Version not supported"
         ];
 
-        return $codes[$code] ? $codes[$code] : $codes["404"];
+        return $codes[$code] ?? $codes["404"];
     }
 
     private function separateQueryParamsFromRoute(string $fullRoute): array
