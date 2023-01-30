@@ -16,6 +16,14 @@ class RequestTest extends TestCase {
     Content-Length: 19
     END;
 
+    public string $rawHeaders_without_contentType = <<<END
+    GET / HTTP/1.1
+    Host: localhost:8080
+    User-Agent: insomnia/2022.4.2
+    Accept: */*
+    Content-Length: 19
+    END;
+
     public string $bodyJson_valid = '{"key": "value"}';
     public string $bodyJson_multipleSpaces = '{
 
@@ -126,6 +134,24 @@ class RequestTest extends TestCase {
         $actual = new Request($rawRequest);
         $actual->parseRaw();
         
+        $this->assertEquals($expected, (array)$actual);
+    }
+
+    public function testIfCanParseRequestWithoutContentType(): void
+    {
+        $rawRequest = $this->rawHeaders_without_contentType .
+                      PHP_EOL . PHP_EOL;
+
+        $expected = [
+            "headers" => new Headers($this->rawHeaders_without_contentType),
+            "body" => new Body()
+        ];
+        $expected["headers"]->parseRaw();
+        $expected["body"]->parseRawByContentType();
+
+        $actual = new Request($rawRequest);
+        $actual->parseRaw();
+
         $this->assertEquals($expected, (array)$actual);
     }
 }

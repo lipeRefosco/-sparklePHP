@@ -17,7 +17,7 @@ class Body{
         $this->$key = $data;
     }
     
-    public function parseRawByContentType(?string $contentType): void
+    public function parseRawByContentType(?string $contentType = null): void
     {   
         if($contentType === "application/json") {
             $this->data = json_decode($this->raw, true);
