@@ -16,12 +16,11 @@ class HeadersTest extends TestCase
         Accept-Encoding: gzip, deflate, br
         END;
 
-        $rawSplited = explode("\n", $raw);
-
         $expected = [
             "method"     => "GET",
             "route"      => "/favicon.ico",
             "version"    => "HTTP/1.1",
+            "query"      => [],
             "fields"     => [
                 "Host"            => "localhost:8080",
                 "User-Agent"      => "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:83.0) Gecko/20100101 Firefox/83.0",

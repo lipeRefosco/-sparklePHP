@@ -187,8 +187,12 @@ class Headers {
     public function setQueryParams(string $queryParams): void
     {
         $queryIsEmpty = $queryParams == "";
-        if(is_null($queryParams)) return;
-        if($queryIsEmpty) return;
+        
+        if($queryIsEmpty) {
+            $this->query = [];
+            return;
+        }
+      
         $this->query = $this->parseQueryParam($queryParams);
     }
 }
