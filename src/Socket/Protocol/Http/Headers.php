@@ -151,15 +151,13 @@ class Headers {
 
     private function parseQueryParam(string $queryParam): array
     {
-        $queryParamsIsEmpty = $queryParam == "";
-        if($queryParamsIsEmpty) return [];
-
         $querySplited = explode("&", $queryParam);
         $queryFormated = [];
-        
+
         foreach ($querySplited as $queryWithValue) {
-            [$query, $value] = explode("=", $queryWithValue);
-            
+            $queryAndValue = explode("=", $queryWithValue);
+            $query = $queryAndValue[0];
+            $value = $queryAndValue[1] ?? "";
             $queryFormated += [ $query => $value ];
         }
 

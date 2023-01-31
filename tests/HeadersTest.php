@@ -31,10 +31,10 @@ class HeadersTest extends TestCase
             ]
         ];
 
-        $result = new Headers($raw);
-        $result->parseRaw();
+        $actual = new Headers($raw);
+        $actual->parseRaw();
         
-        $this->assertEquals($expected, (array)$result);
+        $this->assertEquals($expected, (array)$actual);
     }
 
     public function testHeaderParserMethodWithQueryParams(): void
@@ -63,11 +63,11 @@ class HeadersTest extends TestCase
 
     public function testToRawMethod(): void
     {
-        $result = new Headers();
-        $result->setStatus("200");
-        $result->setVersion("HTTP/1.1");
-        $result->set("Content-Type", "application/json");
-        $result->toRaw();
+        $actual = new Headers();
+        $actual->setStatus("200");
+        $actual->setVersion("HTTP/1.1");
+        $actual->set("Content-Type", "application/json");
+        $actual->toRaw();
 
         $expected = [
             "raw" => <<<END
@@ -82,6 +82,54 @@ class HeadersTest extends TestCase
             ]
         ];
 
-        $this->assertEquals($expected, (array)$result);
+        $this->assertEquals($expected, (array)$actual);
+    }
+
+    public function testParseWhenQueryParamsHasAKeyWithoutValue(): void
+    {
+        $rawHeader = <<<HEADER
+        GET /?bar=4&foo HTTP/1.1
+        Host: localhost:8080
+        HEADER;
+
+        $actual = new Headers($rawHeader);
+        $actual->parseRaw();
+
+        $expected = [
+            "method"     => "GET",
+            "route"      => "/",
+            "query"      => [
+                "bar" => "4",
+                "foo"   => ""
+            ],
+            "version"    => "HTTP/1.1",
+            "fields"     => [ "Host"  => "localhost:8080" ]
+        ];
+
+        $this->assertEquals($expected, (array)$actual);
+    }
+
+    public function testParseWhenQueryParamsHasAKeyWithEmptyValue(): void
+    {
+        $rawHeader = <<<HEADER
+        GET /?bar=4&foo= HTTP/1.1
+        Host: localhost:8080
+        HEADER;
+
+        $actual = new Headers($rawHeader);
+        $actual->parseRaw();
+
+        $expected = [
+            "method"     => "GET",
+            "route"      => "/",
+            "query"      => [
+                "bar" => "4",
+                "foo"   => ""
+            ],
+            "version"    => "HTTP/1.1",
+            "fields"     => [ "Host"  => "localhost:8080" ]
+        ];
+
+        $this->assertEquals($expected, (array)$actual);
     }
 }
