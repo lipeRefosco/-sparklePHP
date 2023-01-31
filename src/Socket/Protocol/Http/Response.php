@@ -15,19 +15,36 @@ class Response {
         $this->body = new Body();
     }
 
-    public function send(string | array $data): void
+    public function send(string $data): void
     {
-        $this->body->set("data", $data);
+        // function isJson(&$string) {
+        //     return is_object(json_decode($string)) || is_array(json_decode($string)) ? true : false;
+        // }
+        
+        // if(isJson($data)) $this->headers->set("Content-Type", "application/json");
+        
+        $this->body->set("raw", $data);
+    }
+
+    public function sendJSON(string | array | object $json): void
+    {
+        $this->headers->set("Content-Type", "application/json");
+        $this->send(json_encode($json));
+    }
+
+    public function sendHTML(string $html): void
+    {
+        $this->headers->set("Content-Type", "text/html; charset=UTF-8");
+        $this->send($html);
     }
 
     public function toRaw(): void
     {
         $this->headers->toRaw();
-        $this->body->toRaw();
 
         $this->raw = $this->headers->raw;
 
-        is_null($this->body->data) ?: $this->raw .= $this->separator;
+        $this->raw .= $this->separator;
         
         $this->raw .= $this->body->raw;
     }
@@ -36,7 +53,6 @@ class Response {
     {
         $this->headers->setVersion("HTTP/1.1");
         $this->headers->setStatus("200");
-        $this->headers->set("Content-Type", "application/json");
     }
 
 }

@@ -103,4 +103,15 @@ class BodyTest extends TestCase {
 
         $this->assertEquals($expected, (array)$actual);
     }
+
+    public function testGetRaw(): void
+    {
+        $actual = new Body('{"key": "value"}');
+        
+        $expected = [
+            "raw" => '{"key": "value"}',
+        ];
+
+        $this->assertEquals($expected, (array)$actual);
+    }
 }
