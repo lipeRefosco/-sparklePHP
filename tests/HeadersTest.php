@@ -19,12 +19,9 @@ class HeadersTest extends TestCase
         $rawSplited = explode("\n", $raw);
 
         $expected = [
-            "raw"        => $raw,
-            "rawSplited" => $rawSplited,
             "method"     => "GET",
             "route"      => "/favicon.ico",
             "version"    => "HTTP/1.1",
-            "query"      => [],
             "fields"     => [
                 "Host"            => "localhost:8080",
                 "User-Agent"      => "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:83.0) Gecko/20100101 Firefox/83.0",
@@ -47,14 +44,10 @@ class HeadersTest extends TestCase
                 Host: localhost:8080
                 END;
 
-        $dataSplited = explode("\n", $data);
-
         $actual = new Headers($data);
         $actual->parseRaw();
 
         $expected = [
-            "raw"        => $data,
-            "rawSplited" => $dataSplited,
             "method"     => "GET",
             "route"      => "/",
             "query"      => [

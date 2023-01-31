@@ -53,6 +53,9 @@ class Headers {
         $this->setVersion($httpVersion);
         $this->setQueryParams($queryParams);
         $this->setFieldsAndValues();
+
+        unset($this->raw);
+        unset($this->rawSplited);
     }
     
     public function set(string $key, string $value): void
@@ -142,7 +145,7 @@ class Headers {
     {
         $routeAndQueryParams = explode("?", $fullRoute);
         $route = $routeAndQueryParams[0] ?? throw new Exception("Bad request na separação de strings");
-        $queryParams = $routeAndQueryParams[1] ?? "";
+        $queryParams = $routeAndQueryParams[1] ?? ""; 
          
     }
 
@@ -183,9 +186,11 @@ class Headers {
         $this->status = $status;
     } 
 
-    public function setQueryParams(string | null $queryParams): void
+    public function setQueryParams(string $queryParams): void
     {
+        $queryIsEmpty = $queryParams == "";
         if(is_null($queryParams)) return;
+        if($queryIsEmpty) return;
         $this->query = $this->parseQueryParam($queryParams);
     }
 }
