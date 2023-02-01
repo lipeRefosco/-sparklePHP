@@ -33,6 +33,8 @@ class HttpServer extends Socket {
             try {
                 $rawRequest = $this->read($client, $this->limit);
 
+                if(!is_string($rawRequest) || $rawRequest == "") throw new Exception("bad request");
+
                 $this->request = new Request($rawRequest);
                 $this->request->parseRaw();
 

@@ -59,12 +59,7 @@ class Socket {
     }
     protected function read(GlobalSocket &$socket, int $limit): string
     {
-        $received = socket_read($socket, $limit);
-        
-        if(!is_string($received) || $received == "") throw new Exception("bad request");
-        
-        var_dump("dentro do read", $received);
-        return $received; 
+        return socket_read($socket, $limit);
     }
 
     static function send(GlobalSocket &$client, string $data, ?int $flag = MSG_CONFIRM):void
