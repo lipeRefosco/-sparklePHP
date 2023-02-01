@@ -31,6 +31,7 @@ class Socket {
     protected function setOptions(): void
     {
         socket_set_option($this->socket, SOL_SOCKET, SO_REUSEADDR, 1);
+        socket_set_option($this->socket, SOL_SOCKET, SO_RCVTIMEO, ["sec" => 1, "usec" => 0]);
     }
 
     protected function setNonblock(): void
