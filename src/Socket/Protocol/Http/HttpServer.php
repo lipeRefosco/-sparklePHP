@@ -43,8 +43,8 @@ class HttpServer extends Socket {
                 $requestMethod = $this->request->headers->method;
 
                 $endpoint = $this->router->hasEndpoint($requestRoute, $requestMethod)
-                        ? $this->router->getEndpoint($requestRoute, $requestMethod)
-                        : $this->router->getEndpoint("default", "all");
+                          ? $this->router->getEndpoint($requestRoute, $requestMethod)
+                          : $this->router->getEndpoint("default", "all");
 
                 $endpoint($this->request, $this->response);
 
