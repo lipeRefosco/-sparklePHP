@@ -2,6 +2,8 @@
 
 namespace SparklePHP\Socket\Protocol\Http;
 
+use DateTime;
+use Exception;
 use SparklePHP\Socket\Socket;
 use SparklePHP\Socket\Protocol\Http\Request;
 use SparklePHP\Socket\Protocol\Http\Response;
@@ -24,41 +26,45 @@ class HttpServer extends Socket {
 
     public function protocol(): void
     {
-        $removeFirstIndice = fn(&$i) => array_shift($i);
-
         $this->accept($this->socket);
 
         foreach($this->clients as $client) {
             
-            $rawRequest = $this->read($client, $this->limit);
+            try {
+                $rawRequest = $this->read($client, $this->limit);
 
-            $this->request = new Request($rawRequest);
-            $this->request->parseRaw();
+                $this->request = new Request($rawRequest);
+                $this->request->parseRaw();
 
-            $this->response = new Response();
-            $this->response->setup();
-            
-            $requestRoute = $this->request->headers->route;
-            $requestMethod = $this->request->headers->method;
+                $this->response = new Response();
+                $this->response->setup();
+                
+                $requestRoute = $this->request->headers->route;
+                $requestMethod = $this->request->headers->method;
 
-            $endpoint = $this->router->hasEndpoint($requestRoute, $requestMethod)
-                      ? $this->router->getEndpoint($requestRoute, $requestMethod)
-                      : $this->router->getEndpoint("default", "all");
+                $endpoint = $this->router->hasEndpoint($requestRoute, $requestMethod)
+                        ? $this->router->getEndpoint($requestRoute, $requestMethod)
+                        : $this->router->getEndpoint("default", "all");
 
-            $endpoint($this->request, $this->response);
+                $endpoint($this->request, $this->response);
 
-            $this->response->toRaw();
-            
-            Socket::send($client, $this->response->raw);
-            Socket::close($client);
-            
-            $removeFirstIndice($this->clients);
+                $this->response->toRaw();
+                
+                Socket::send($client, $this->response->raw);
+                
+            } catch (Exception $e) {
+                Socket::send($client, json_encode($e));
+            } finally {
+                Socket::close($client);
+                $this->removeFirstClient();
+            }
         }
     }
 
     public function listen(?callable $callback = null): void
     {
         parent::setBind();
+        parent::setNonblock();
         parent::listen();
 
         is_null($callback) ?: $callback($this);
