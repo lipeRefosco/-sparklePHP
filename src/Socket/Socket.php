@@ -24,7 +24,6 @@ class Socket {
     
     protected function setBind(): void
     {
-        $this->setOptions();
         $this->bind($this->socket, $this->address, $this->port);
     }
 
@@ -37,13 +36,6 @@ class Socket {
     protected function setNonblock(): void
     {
         socket_set_nonblock($this->socket);
-    }
-    
-    protected function loop(callable &$protocol): void
-    {
-        while (true) {
-            $protocol();
-        }
     }
 
     protected function listen(): void

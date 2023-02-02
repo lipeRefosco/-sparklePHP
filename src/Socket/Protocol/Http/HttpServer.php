@@ -65,6 +65,7 @@ class HttpServer extends Socket {
 
     public function listen(?callable $callback = null): void
     {
+        parent::setOptions();
         parent::setBind();
         parent::setNonblock();
         parent::listen();
