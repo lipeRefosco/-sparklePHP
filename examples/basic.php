@@ -17,6 +17,8 @@ $app->get("/", function (Request $req, Response $res) {
 
 $app->get("/html", function ($_, Response $res) {
 
+    $teste = "hello world";
+
     $html = <<<HTML
     <!DOCTYPE html>
     <html>
@@ -82,6 +84,7 @@ $app->get("/html", function ($_, Response $res) {
         <section>
         <article>
             <header>
+            <h1>{$teste}</h1>
             <h2>Learn HTML</h2>
             <small>Hyper Text Markup Language</small>
             </header>
