@@ -12,7 +12,7 @@ $port = 8080;
 $app = new Sparkle($address, $port);
 
 $app->get("/", function (Request $req, Response $res) {
-    $acceptIsJson = !empty($_REQUEST["Accept"]) && $_REQUEST["Accept"] === "application/json";
+    $acceptIsJson = !empty($req->headers->fields["Accept"]) && $req->headers->fields["Accept"] === "application/json";
     if($acceptIsJson) {
         $res->sendJSON($_REQUEST);
         return;
