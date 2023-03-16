@@ -12,7 +12,29 @@ $port = 8080;
 $app = new Sparkle($address, $port);
 
 $app->get("/", function (Request $req, Response $res) {
-    $res->sendJSON($req);
+    $acceptIsJson = !empty($_REQUEST["Accept"]) && $_REQUEST["Accept"] === "application/json";
+    if($acceptIsJson) {
+        $res->sendJSON($_REQUEST);
+        return;
+    }
+
+    
+    $reqJson = str_replace(":{", ": {<br>", str_replace(",", ", <br>", json_encode($_REQUEST)));
+    
+    $html = <<<HTML
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Title of the document</title>
+    </head>
+    <body>
+        <h1>holla que tal</h1>
+        <pre>$reqJson</pre>
+    </body>
+    </html>
+    HTML;
+    
+    $res->sendHTML($html);
 });
 
 $app->get("/html", function ($_, Response $res) {
