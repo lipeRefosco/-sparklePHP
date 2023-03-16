@@ -14,12 +14,12 @@ $app = new Sparkle($address, $port);
 $app->get("/", function (Request $req, Response $res) {
     $acceptIsJson = !empty($req->headers->fields["Accept"]) && $req->headers->fields["Accept"] === "application/json";
     if($acceptIsJson) {
-        $res->sendJSON($_REQUEST);
+        $res->sendJSON($req);
         return;
     }
 
     
-    $reqJson = str_replace(":{", ": {<br>", str_replace(",", ", <br>", json_encode($_REQUEST)));
+    $reqJson = str_replace(":{", ": {<br>", str_replace(",", ", <br>", json_encode($req)));
     
     $html = <<<HTML
     <!DOCTYPE html>
